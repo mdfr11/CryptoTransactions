@@ -1,8 +1,15 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { connect } from 'react-redux';
+import { FetchCoinData } from '../actions/';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 
 class TransactionsCont extends Component { 
+    componentDidMount() {
+        this.props.FetchCoinData();
+      }
     render() {
+        const { crypto } = this.props;
+        console.log('aaaaaaa ' + JSON.stringify(crypto))
         return(
             <View>
                 <Text>Start</Text>
@@ -11,4 +18,8 @@ class TransactionsCont extends Component {
     }
 }
 
-export default TransactionsCont
+const mapStateToProps = state => ({
+    crypto: state.crypto,
+});
+  
+export default connect(mapStateToProps, { FetchCoinData })(TransactionsCont);
