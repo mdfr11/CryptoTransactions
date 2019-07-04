@@ -5,9 +5,10 @@ import {
   createAppContainer
 } from "react-navigation";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import TransactionsScreen from "../screens/TransactionsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import TransactionsCont from "../containers/TransactionsCont";
+import AddTransaction from "../components/AddTransaction";
 
 const TransactionsIcon = ({ tintColor }) => (
   <AntDesign name="linechart" size={25} color={tintColor} />
@@ -20,8 +21,23 @@ const SettingsIcon = ({ tintColor }) => (
 const Transactions = createStackNavigator(
   {
     Transactions: {
-      screen: TransactionsScreen
-    }
+      screen: TransactionsCont,
+      navigationOptions: () => ({
+        headerStyle: {
+          backgroundColor: "#1E2223"
+        },
+        headerTitleStyle: {
+          color: "#D3BD83"
+        },
+        title: "Your transactions"
+      }),
+    },
+    AddTransaction: {
+        screen: AddTransaction,
+        navigationOptions: () => ({
+          header: null
+        }),
+      },
   },
   {
     headerMode: "screen",
