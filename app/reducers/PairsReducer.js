@@ -1,41 +1,41 @@
-import { FETCH_COIN_DATA, FETCH_COIN_DATA_SUCCESS, FETCH_COIN_DATA_FAIL } from '../actions/types';
+import { GET_COINS, GET_COINS_SUCCESS, GET_COINS_FAIL } from "../actions/types";
 
 const INITIAL_STATE = {
   isFetching: false,
   data: [],
   hasError: false,
-  errorMessage: null,
+  errorMessage: null
 };
 
-const CryptoReducer = (state = INITIAL_STATE, action) => {
+const PairsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case FETCH_COIN_DATA:
+    case GET_COINS:
       return {
         ...state,
         isFetching: true,
         data: [],
         hasError: false,
-        errorMessage: null,
+        errorMessage: null
       };
-    case FETCH_COIN_DATA_SUCCESS:
+    case GET_COINS_SUCCESS:
       return {
         ...state,
         isFetching: false,
-        data: [...state.data, action.payload],
+        data: action.payload,
         hasError: false,
-        errorMessage: null,
+        errorMessage: null
       };
-    case FETCH_COIN_DATA_FAIL:
+    case GET_COINS_FAIL:
       return {
         ...state,
         isFetching: false,
         data: [],
         hasError: true,
-        errorMessage: action.payload,
+        errorMessage: action.payload
       };
     default:
       return state;
   }
 };
 
-export default CryptoReducer;
+export default PairsReducer;

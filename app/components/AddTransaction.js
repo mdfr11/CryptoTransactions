@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Picker, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Picker } from "react-native";
+import { connect } from "react-redux";
+import { GetPairs } from "../actions/";
 import { Button, Input } from "react-native-elements";
-import { Constants, SQLite } from "expo";
+import { SQLite } from "expo";
 import { Calendar } from "react-native-calendars";
 import {
   Menu,
@@ -16,20 +18,27 @@ const db = SQLite.openDatabase("db.db");
 class AddTransaction extends Component {
   constructor(props) {
     super(props);
-    this.state = { selected: null, coin: null, amount: null, price: null };
+    this.state = { selected: null, pair: null, amount: null, price: null };
     this.onDayPress = this.onDayPress.bind(this);
   }
   componentDidMount() {
+    this.props.GetPairs();
+    /* db.transaction(tx => {
+        tx.executeSql('DROP TABLE transactions');
+      }); */
     db.transaction(tx => {
       tx.executeSql(
-        "create table if not exists transactions (id integer primary key not null, coin text, amount int, price int, date int);"
+        "create table if not exists transactions (id integer primary key not null, pair text, amount int, price int, date int);"
       );
     });
   }
   render() {
-    console.log("saasdsadaasd " + JSON.stringify(this.state.coin));
-    console.log("saasdsadaasd " + JSON.stringify(this.state.selected));
-    console.log("saasdsadaasdweqw " + JSON.stringify(this.state.amount));
+      console.log('pairrrrrrrrrrr ' + this.state.pair)
+    const { pairs } = this.props;
+    const pairsArray = Object.values(Object.assign({}, pairs)).map(
+      ({ symbol1, symbol2 }) => symbol1 + "/" + symbol2
+    );
+    console.log("gffffffffff " + JSON.stringify(pairsArray));
     const CalendarCont = () => (
       <View style={calendarContStyle}>
         <Menu>
@@ -120,14 +129,25 @@ class AddTransaction extends Component {
               onChangeText={price => this.setState({ price })}
             />
           </View>
+          <Picker
+            selectedValue={this.state.pair}
+            style={dropdown}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({ pair: itemValue })
+            }
+          >
+            {pairsArray.map((item, i) => (
+              <Picker.Item key={i} label={item} value={item} />
+            ))}
+          </Picker>
           <Button
             title="Add transaction"
             onPress={() =>
               db.transaction(tx => {
                 tx.executeSql(
-                  "insert into transactions (coin, amount, price, date) values (?, ?, ?, ?)",
+                  "insert into transactions (pair, amount, price, date) values (?, ?, ?, ?)",
                   [
-                    this.state.coin,
+                    this.state.pair,
                     this.state.amount,
                     this.state.price,
                     this.state.selected
@@ -153,7 +173,7 @@ class AddTransaction extends Component {
 }
 
 const screenWidth = Math.round(Dimensions.get("window").width);
-const contWidth = (screenWidth * 0.5) * 0.9
+const contWidth = screenWidth * 0.5 * 0.9;
 
 const triggerStyles = {
   triggerText: {
@@ -189,16 +209,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   subcontainer: {
     width: screenWidth * 0.5,
-    borderRadius: 5,
+    borderRadius: 5
   },
   buttonStyle: {
     width: contWidth,
     backgroundColor: "#D3BD83",
     marginTop: screenWidth * 0.15,
+    margin: 5
   },
   calendar: {
     paddingTop: 5,
@@ -213,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1E2223",
     borderRadius: 5,
     margin: 5,
-    width: screenWidth * 0.25,
+    width: screenWidth * 0.25
   },
   inputContainer: {
     backgroundColor: "#1E2223",
@@ -223,6 +244,15 @@ const styles = StyleSheet.create({
   },
   inputContainerStyle: {
     borderBottomWidth: 0
+  },
+  dropdown: {
+    height: 50,
+    backgroundColor: "#1E2223",
+    margin: 5,
+    color: "#787878",
+    borderRadius: 5,
+    width: contWidth,
+    fontSize: 13
   }
 });
 
@@ -234,7 +264,15 @@ const {
   inputContainer,
   inputContainerCoin,
   calendarContStyle,
-  inputContainerStyle
+  inputContainerStyle,
+  dropdown
 } = styles;
 
-export default AddTransaction;
+const mapStateToProps = state => ({
+  pairs: state.pairs.data.pairs
+});
+
+export default connect(
+  mapStateToProps,
+  { GetPairs }
+)(AddTransaction);
