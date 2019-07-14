@@ -98,7 +98,7 @@ class AddTransaction extends Component {
       <MenuProvider style={container}>
         <View style={subcontainer}>
           <CalendarCont />
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {/*<View style={{ flexDirection: "row", alignItems: "center" }}>
             <Input
               placeholder="Coin"
               containerStyle={inputContainerCoin}
@@ -108,7 +108,7 @@ class AddTransaction extends Component {
               onChangeText={coin => this.setState({ coin })}
             />
             <Text style={{ color: "#787878" }}>/USD</Text>
-          </View>
+            </View> */}
           <View>
             <Input
               placeholder="Amount"

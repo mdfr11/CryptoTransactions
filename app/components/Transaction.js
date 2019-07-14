@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Dimensions } from "react-native";
 import Chart from "./Chart";
-import { Constants, Svg } from "expo";
+import { Constants } from "expo";
+import { LineChart, XAxis, Grid } from 'react-native-svg-charts'
 
 class Transaction extends Component {
   render() {
     const qqq = 3591
     const www = 3345
+    const data = [123,234,32,4,234,23,4,23342,23,4,23,4,2]
     const {item} = this.props
     return (
         <View>
