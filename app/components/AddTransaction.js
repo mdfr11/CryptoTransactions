@@ -33,12 +33,10 @@ class AddTransaction extends Component {
     });
   }
   render() {
-      console.log('pairrrrrrrrrrr ' + this.state.pair)
     const { pairs } = this.props;
     const pairsArray = Object.values(Object.assign({}, pairs)).map(
       ({ symbol1, symbol2 }) => symbol1 + "/" + symbol2
     );
-    console.log("gffffffffff " + JSON.stringify(pairsArray));
     const CalendarCont = () => (
       <View style={calendarContStyle}>
         <Menu>
@@ -152,9 +150,6 @@ class AddTransaction extends Component {
                     this.state.price,
                     this.state.selected
                   ]
-                );
-                tx.executeSql("select * from transactions", [], (_, { rows }) =>
-                  console.log(JSON.stringify(rows))
                 );
               }, null)
             }

@@ -28,22 +28,23 @@ class TransactionsCont extends Component {
       _.keyBy(cryptoTransform, 'pair')
     ))*/
     function gggg(transactions, cryptoTransform) {
-      if(transactions) {
+      var lll = []
+      if(transactions && cryptoTransform) {
         transactions.map( (t) => {
           cryptoTransform.map( (c) => {
             if(t.pair === c.pair) {
-              _.merge(t,c)
+              lll.push(_.merge(t,c))
             }
           } )
         } )
-      }   
+      } 
+      return _.uniq(lll)
     }
-    gggg(transactions, cryptoTransform)
     return (
       <ScrollView>
       <View style={container}>
         <FlatList
-        data={transactions}
+        data={gggg(transactions, cryptoTransform)}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <Transaction item={item} update={this.update}/>
