@@ -21,7 +21,6 @@ class Chart extends Component {
     const ticks = center / 100;
     const data = center + percent * ticks;
     const height = 30;
-    console.log("jjjjjjjjj " + percentq);
     if (percentq === 0) {
       return <View style={style} />
     }

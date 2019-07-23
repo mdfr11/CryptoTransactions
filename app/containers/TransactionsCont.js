@@ -18,39 +18,35 @@ class TransactionsCont extends Component {
   }
   componentDidMount() {
     this.update();
-    const symbol1 = "BTC";
-    const pairsArray = Object.values(
-      Object.assign({}, this.state.transactions)
-    ).map(({ pair }) => pair);
-    /* (() => {
-      db.transaction(tx => {
-        tx.executeSql(
-          "select * from transactions",
-          [],
-          this.props.FetchCoinData((_, { rows }) => this.setState({ transactions: rows._array })),
-          null,
-          this.update
-        );
-      });
-    })() */
   }
   render() {
     const { crypto, navigation } = this.props;
     const { transactions } = this.state;
-    const cryptoTransform = crypto.map( ({lprice, curr1, curr2}) => ({lprice: lprice, pair: curr1 + '/' + curr2}) )
-    const mergeArrays = _.values(_.merge(
-      _.keyBy(this.state.transactions, 'pair'),
+    const cryptoTransform = crypto.map( ({lprice, curr1, curr2}) => ({lprice, pair: curr1 + '/' + curr2}) )
+    /*const mergeArrays = _.values(_.merge(
+      _.keyBy(transactions, 'pair'),
       _.keyBy(cryptoTransform, 'pair')
-    ))
-    console.log("asdasdsdqqqqqqqq " + JSON.stringify(mergeArrays));
+    ))*/
+    function gggg(transactions, cryptoTransform) {
+      if(transactions) {
+        transactions.map( (t) => {
+          cryptoTransform.map( (c) => {
+            if(t.pair === c.pair) {
+              _.merge(t,c)
+            }
+          } )
+        } )
+      }   
+    }
+    gggg(transactions, cryptoTransform)
     return (
       <ScrollView>
       <View style={container}>
         <FlatList
-        data={mergeArrays}
+        data={transactions}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <Transaction item={item} />
+          <Transaction item={item} update={this.update}/>
         )} />
         <Button
           title="Add transaction"

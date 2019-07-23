@@ -9,7 +9,6 @@ import {
 } from './types';
 
 export const FetchCoinData = (pair) => async (dispatch) => {
-  console.log('asdzxcxzczx ' + JSON.stringify(pair))
   dispatch({ type: FETCH_COIN_DATA });
   try {
     const result = await axios.get('https://cex.io/api/last_price/' + pair);
