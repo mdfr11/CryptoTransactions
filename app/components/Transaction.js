@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, FlatList, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import Chart from "./Chart";
-import { Constants } from "expo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { SQLite } from "expo";
 import { Button } from "react-native-elements";
@@ -14,22 +13,29 @@ class Transaction extends Component {
     return (
       <View>
         <View style={container}>
-          <Button
-            onPress={() =>
-              db.transaction(
-                tx => {
-                  tx.executeSql(`delete from transactions where id = ?;`, [
-                    item.id
-                  ]);
-                },
-                null,
-                update
-              )
-            }
-            icon={<AntDesign name="close" size={30} color="#D3BD83" />}
-            type="clear"
-          />
-          <Text style={text}>TransactionID {item.id}</Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: 'space-between',
+              alignItems: "center"
+            }}
+          >
+            <Text style={text}>TransactionID {item.id}</Text>
+            <Button
+              buttonStyle={{padding: 0}}
+              onPress={() =>
+                db.transaction(
+                  tx => {
+                    tx.executeSql(`delete from transactions where id = ?;`, [item.id]);},
+                  null,
+                  update
+                )
+              }
+              icon={<AntDesign name="close" size={20} color="#D3BD83" />}
+              type="clear"
+            />
+          </View>
           <Text style={text}>Date {item.date}</Text>
           <Text style={text}>Pair {item.pair}</Text>
           <Text style={text}>Amount {item.amount}</Text>
@@ -57,11 +63,6 @@ class Transaction extends Component {
 const screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
-  header: {
-    fontSize: 30,
-    fontWeight: "bold",
-    padding: 10
-  },
   container: {
     padding: 15,
     borderRadius: 5,
@@ -72,15 +73,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#787878"
-  },
-  containerChart: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: Constants.statusBarHeight
   }
 });
 
-const { header, container, text, containerChart } = styles;
+const { container, text } = styles;
 
 export default Transaction;

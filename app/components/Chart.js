@@ -49,7 +49,7 @@ class Chart extends Component {
               fill={data > center ? "#2DB091" : "#D86273"}
             />
             <Svg.Text fill={data > center ? "#2DB091" : "#D86273"} fontSize="12" x={data + 5} y="30">
-              {round(percentq)}
+              {round(percentq)}%
             </Svg.Text>
           </Svg.G>
         </Svg>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: Constants.statusBarHeight
+    paddingTop: 15
   }
 });
 
