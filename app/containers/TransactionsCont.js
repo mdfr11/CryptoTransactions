@@ -7,11 +7,14 @@ import {
   RefreshControl,
   View,
   FlatList,
-  ScrollView
+  ScrollView,
+  Text,
+  Dimensions
 } from "react-native";
 import { Button } from "react-native-elements";
 import Transaction from "../components/Transaction";
 import _ from "lodash";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -33,11 +36,22 @@ class TransactionsCont extends Component {
       lprice,
       pair: curr1 + "/" + curr2
     }));
+    const Empty = () => (
+      <View style={{
+        padding: 15,
+        borderRadius: 5,
+        backgroundColor: "#1E2223",
+        width: Dimensions.get("window").width * 0.9,
+        marginTop: 10,
+        marginBottom: 10}}>
+        <Text style={{color: '#787878'}}>The list is empty</Text>
+      </View>
+    )
     /*const mergeArrays = _.values(_.merge(
       _.keyBy(transactions, 'pair'),
       _.keyBy(cryptoTransform, 'pair')
     ))*/
-    function gggg(transactions, cryptoTransform) {
+    function mergeArrays(transactions, cryptoTransform) {
       var lll = [];
       if (transactions && cryptoTransform) {
         transactions.map(t => {
@@ -51,32 +65,43 @@ class TransactionsCont extends Component {
       return _.uniq(lll);
     }
     return (
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }
-      >
-        <View style={container}>
-          <FlatList
-            data={gggg(transactions, cryptoTransform)}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <Transaction item={item} update={this.update} id={item.id} />
-            )}
-          />
+      <View style={{height: '100%'}}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+        >
+          <View style={container}>
+            <FlatList
+              data={mergeArrays(transactions, cryptoTransform)}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <Transaction item={item} update={this.update} navigation={navigation} />
+              )}
+            />
+          </View>
+        </ScrollView>
+        <View>
           <Button
-            title="Add transaction"
-            onPress={() => navigation.navigate("AddTransaction")}
+            onPress={() => navigation.navigate("AddTransaction", {update: this.update})}
             buttonStyle={{
-              width: 150,
-              backgroundColor: "#D3BD83"
+              width: 45,
+              height: 45,
+              backgroundColor: "#D3BD83",
+              borderRadius: 100,
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              margin: 30
             }}
+            containerStyle={{}}
+            icon={<AntDesign name="plus" size={30} color="white" />}
           />
         </View>
-      </ScrollView>
+      </View>
     );
   }
   update = async () => {
@@ -94,6 +119,11 @@ class TransactionsCont extends Component {
         this.update
       );
     });
+    /*db.transaction(tx => {
+      tx.executeSql(
+        "drop table transactions"
+      );
+    });*/
   };
   _onRefresh = () => {
     this.setState({ refreshing: true });

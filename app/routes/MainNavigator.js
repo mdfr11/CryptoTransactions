@@ -9,6 +9,7 @@ import TransactionsScreen from "../screens/TransactionsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import TransactionsCont from "../containers/TransactionsCont";
 import AddTransaction from "../components/AddTransaction";
+import EditTransaction from "../components/EditTransaction";
 
 const TransactionsIcon = ({ tintColor }) => (
   <AntDesign name="linechart" size={25} color={tintColor} />
@@ -34,6 +35,12 @@ const Transactions = createStackNavigator(
     },
     AddTransaction: {
         screen: AddTransaction,
+        navigationOptions: () => ({
+          header: null
+        }),
+      },
+      EditTransaction: {
+        screen: EditTransaction,
         navigationOptions: () => ({
           header: null
         }),

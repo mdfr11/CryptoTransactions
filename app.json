@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "CryptoTransactions",
+    "name": "Crypto transactions",
     "slug": "CryptoTransactions",
     "privacy": "public",
     "sdkVersion": "33.0.0",
     "platforms": [
       "android"
     ],
-    "version": "1.0.1",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

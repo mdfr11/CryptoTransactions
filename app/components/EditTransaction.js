@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Picker,
-  Keyboard,
-  TouchableWithoutFeedback
-} from "react-native";
+import { StyleSheet, Text, View, Dimensions, Picker } from "react-native";
 import { connect } from "react-redux";
 import { GetPairs } from "../actions/";
 import { Button, Input } from "react-native-elements";
@@ -23,25 +15,18 @@ import {
 
 const db = SQLite.openDatabase("db.db");
 
-class AddTransaction extends Component {
+class EditTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = { selected: null, pair: null, amount: null, price: null };
     this.onDayPress = this.onDayPress.bind(this);
   }
   componentDidMount() {
+    this.selectTransaction();
     this.props.GetPairs();
-    /* db.transaction(tx => {
-        tx.executeSql('DROP TABLE transactions');
-      }); */
-    db.transaction(tx => {
-      tx.executeSql(
-        "create table if not exists transactions (id integer primary key not null, pair text, amount int, price int, date int);"
-      );
-    });
   }
   render() {
-    const { pairs } = this.props;
+    const { pairs, navigation } = this.props;
     const pairsArray = Object.values(Object.assign({}, pairs)).map(
       ({ symbol1, symbol2 }) => symbol1 + "/" + symbol2
     );
@@ -126,6 +111,7 @@ class AddTransaction extends Component {
               inputContainerStyle={inputContainerStyle}
               inputStyle={{ color: "#787878", fontSize: 13 }}
               placeholderTextColor="#787878"
+              value={`${this.state.amount}`}
               onChangeText={amount => this.setState({ amount })}
             />
             <Input
@@ -135,6 +121,7 @@ class AddTransaction extends Component {
               inputContainerStyle={inputContainerStyle}
               inputStyle={{ color: "#787878", fontSize: 13 }}
               placeholderTextColor="#787878"
+              value={`${this.state.price}`}
               onChangeText={price => this.setState({ price })}
             />
           </View>
@@ -151,15 +138,16 @@ class AddTransaction extends Component {
           </Picker>
           <Message />
           <Button
-            title="Add transaction"
-            onPress={() => this.addTransaction()}
+            title="Edit transaction"
+            onPress={() => this.EditTransaction()}
             buttonStyle={buttonStyle}
           />
         </View>
       </MenuProvider>
     );
   }
-  addTransaction() {
+
+  EditTransaction() {
     if (
       this.state.amount === null ||
       this.state.amount === "" ||
@@ -168,24 +156,43 @@ class AddTransaction extends Component {
     ) {
       this.setState({ done: false });
     } else {
-      db.transaction(
-        tx => {
-          tx.executeSql(
-            "insert into transactions (pair, amount, price, date) values (?, ?, ?, ?)",
-            [
-              this.state.pair,
-              this.state.amount,
-              this.state.price,
-              this.state.selected
-            ]
-          );
-        },
-        null,
-        this.props.update
-      ),
+      db.transaction(tx => {
+        tx.executeSql(
+          "update transactions set pair = ?, amount = ?, price = ?, date = ? where id = ?;",
+          [
+            this.state.pair,
+            this.state.amount,
+            this.state.price,
+            this.state.selected,
+            this.props.navigation.state.params.id
+          ]
+        );
+      }, null),
         this.setState({ done: true });
     }
   }
+
+  selectTransaction = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "select * from transactions where id = ?",
+        [this.props.navigation.state.params.id],
+        (_, { rows }) => {
+          Object.values(rows._array).map(item =>
+            this.setState({
+              pair: item.pair,
+              amount: item.amount,
+              price: item.price,
+              selected: item.date
+            })
+          );
+        },
+        null,
+        this.selectTransaction
+      );
+    });
+  };
+
   onDayPress(day) {
     this.setState({
       selected: day.dateString
@@ -289,4 +296,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { GetPairs }
-)(AddTransaction);
+)(EditTransaction);
